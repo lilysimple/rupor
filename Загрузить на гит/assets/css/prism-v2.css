@@ -1,0 +1,1467 @@
+/* ============================================================
+   PRISM · v2 — объём, стекло, сквозная 3D-подложка
+   ============================================================ */
+
+/* ---------- сквозная подложка: пылевое ядро ---------- */
+#stage{
+  position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden;
+  opacity:.30; filter:saturate(1.06) contrast(1.02);
+  -webkit-mask:radial-gradient(135% 105% at 50% 46%, #000 30%, rgba(0,0,0,.62) 64%, rgba(0,0,0,0) 96%);
+  mask:radial-gradient(135% 105% at 50% 46%, #000 30%, rgba(0,0,0,.62) 64%, rgba(0,0,0,0) 96%);
+}
+#stage canvas{display:block;width:100%;height:100%}
+:root[data-theme="dark"] #stage{opacity:.46}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #stage{opacity:.46}}
+@media (max-width:760px){#stage{opacity:.2}}
+@media (prefers-reduced-motion: reduce){#stage{opacity:.18}}
+
+/* холст чуть светлее, чтобы ядро читалось насквозь */
+.cosmos{opacity:.9}
+.cosmos::after{opacity:.34}
+
+/* ---------- общий объём: стекло получает настоящую толщину ---------- */
+.glass{
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.99),
+    inset 0 -34px 64px -36px rgba(107,91,214,.62),
+    inset 24px 0 50px -48px rgba(79,224,208,.75),
+    inset -22px 0 46px -48px rgba(232,111,166,.45),
+    0 1px 2px rgba(60,50,110,.06),
+    0 7px 14px -8px rgba(60,50,110,.2),
+    0 26px 44px -24px rgba(60,50,110,.4),
+    0 64px 96px -64px rgba(60,50,110,.55);
+  transition:transform .55s cubic-bezier(.2,.8,.3,1), box-shadow .55s cubic-bezier(.2,.8,.3,1);
+  will-change:transform;
+}
+.glass::before{opacity:.85}
+:root[data-theme="dark"] .glass{
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.16),
+    inset 0 -34px 64px -34px rgba(139,123,240,.4),
+    0 2px 4px rgba(0,0,0,.45),
+    0 24px 48px -24px rgba(0,0,0,.75),
+    0 70px 100px -60px rgba(0,0,0,.9);
+}
+
+/* лёгкий 3D-подъём карточек */
+.pain, .why-card, .pack, .st, .out, .proof-card, .week, .fcard{
+  transform:perspective(1100px);
+}
+.pain:hover, .why-card:hover, .out:hover, .week:hover, .proof-card:hover{
+  transform:perspective(1100px) translateY(-6px) rotateX(2.2deg);
+}
+.pack:hover{transform:perspective(1100px) translateY(-8px)}
+
+/* ---------- кнопки: объёмное стекло ---------- */
+.btn{
+  padding:16px 32px;
+  transition:transform .2s cubic-bezier(.2,.8,.3,1), box-shadow .24s, filter .24s;
+}
+.btn.p{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.34), rgba(255,255,255,0) 46%),
+    linear-gradient(132deg,#A99BFF 0%, #7A69E4 30%, #5947C4 56%, #3F7FD6 80%, #2FB8C6 100%);
+  border-color:rgba(255,255,255,.5);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.72),
+    inset 0 -16px 26px -18px rgba(16,8,52,.9),
+    0 2px 0 rgba(58,45,146,.9),
+    0 5px 0 -1px rgba(58,45,146,.5),
+    0 12px 22px -8px rgba(89,71,196,.6),
+    0 30px 50px -22px rgba(40,30,100,.6);
+}
+.btn.p:hover{
+  transform:translateY(-3px);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.85),
+    inset 0 -16px 26px -18px rgba(16,8,52,.9),
+    0 3px 0 rgba(58,45,146,.9),
+    0 8px 0 -1px rgba(58,45,146,.5),
+    0 20px 34px -10px rgba(89,71,196,.7),
+    0 42px 66px -26px rgba(40,30,100,.62);
+  filter:saturate(1.1);
+}
+.btn.p:active{
+  transform:translateY(2px);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.6),
+    inset 0 -10px 20px -14px rgba(16,8,52,.9),
+    0 1px 0 rgba(58,45,146,.9),
+    0 6px 14px -8px rgba(89,71,196,.6);
+}
+.btn.g{
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.95),
+    inset 0 -18px 34px -24px rgba(107,91,214,.55),
+    0 2px 0 rgba(160,150,205,.4),
+    0 5px 0 -2px rgba(160,150,205,.28),
+    0 14px 26px -12px rgba(60,50,110,.4),
+    0 34px 54px -30px rgba(60,50,110,.45);
+}
+.btn.g:hover{transform:translateY(-3px)}
+.btn.g:active{transform:translateY(2px)}
+
+/* ---------- шапка ---------- */
+.hdr-in{
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.95),
+    inset 0 -20px 34px -26px rgba(107,91,214,.5),
+    0 2px 5px rgba(60,50,110,.06),
+    0 22px 40px -24px rgba(60,50,110,.4);
+}
+
+/* ============================================================
+   ГЕРОЙ
+   ============================================================ */
+.hero{padding-top:clamp(46px,5.4vw,84px);position:relative;overflow:visible}
+.hero-grid{grid-template-columns:1.1fr .9fr;align-items:center}
+@media (max-width:980px){.hero-grid{grid-template-columns:1fr}}
+
+/* крупный заголовок, подпись мельче и в гармонии */
+h1{font-size:clamp(33px,5vw,64px);line-height:1.02;letter-spacing:-.04em}
+.h1-bold{font-size:1em;letter-spacing:-.046em;line-height:1.0}
+.h1-type{
+  font-size:.46em; font-weight:500; letter-spacing:-.012em;
+  margin-top:.5em; line-height:1.2; min-height:1.2em;
+}
+.hero-sub{margin-top:clamp(18px,2vw,26px);font-size:clamp(16px,1.6vw,18.5px);max-width:48ch}
+
+/* девушка в шаре — крупнее */
+.orbit{max-width:880px;width:142%;margin-left:-21%}
+.crystal-ring{width:112%;filter:drop-shadow(0 54px 92px rgba(60,50,110,.3))}
+@media (max-width:980px){.orbit{width:112%;margin-left:-6%;max-width:660px}}
+@media (max-width:600px){.orbit{width:118%;margin-left:-9%}}
+
+/* круги — по всему блоку героя, а не только вокруг шара */
+.crystal-ring .cr-wave{display:none}
+.hero-rings{
+  position:absolute; inset:-6% -4% 0 -4%; z-index:0; pointer-events:none;
+  display:grid; place-items:center; overflow:visible;
+}
+.hero-rings span{
+  position:absolute; top:46%; left:64%; transform:translate(-50%,-50%) scale(.28);
+  width:min(150vw,1560px); aspect-ratio:1; border-radius:50%;
+  border:1px solid var(--ring-line); opacity:0;
+  animation:heroWave 13s cubic-bezier(.18,.62,.28,1) infinite;
+}
+.hero-rings span:nth-child(2){animation-delay:-2.6s}
+.hero-rings span:nth-child(3){animation-delay:-5.2s}
+.hero-rings span:nth-child(4){animation-delay:-7.8s}
+.hero-rings span:nth-child(5){animation-delay:-10.4s}
+@keyframes heroWave{
+  0%{transform:translate(-50%,-50%) scale(.24);opacity:0}
+  9%{opacity:.5}
+  62%{opacity:.14}
+  100%{transform:translate(-50%,-50%) scale(1);opacity:0}
+}
+@media (max-width:980px){.hero-rings span{left:50%;top:52%;width:min(190vw,1200px)}}
+@media (prefers-reduced-motion: reduce){.hero-rings span{animation:none;opacity:.12;transform:translate(-50%,-50%) scale(.6)}}
+.hero-grid, .flow, .rail{position:relative;z-index:1}
+
+/* ============================================================
+   СХЕМА ПОТОКА — новая раскладка вместо слипшейся строки
+   ============================================================ */
+.flow{
+  display:grid; grid-template-columns:repeat(4,1fr); align-items:start;
+  gap:clamp(14px,1.7vw,24px);
+  margin-top:clamp(44px,5vw,72px);
+}
+.flow::before{
+  content:""; position:absolute; left:6%; right:6%; top:23px; height:1px;
+  background:linear-gradient(90deg, transparent, var(--hair-2) 12%, var(--hair-2) 88%, transparent);
+}
+.flow-step{display:flex;flex-direction:column;gap:16px;min-width:0}
+.fdot{
+  position:relative; z-index:2; width:46px; height:46px; border-radius:50%;
+  display:grid; place-items:center; flex:0 0 auto;
+  font-family:var(--f-m); font-size:12px; letter-spacing:.02em; color:var(--ink-2);
+  background:
+    radial-gradient(circle at 34% 26%, #fff, rgba(255,255,255,.55) 30%, rgba(255,255,255,.1) 62%),
+    linear-gradient(150deg, rgba(139,123,240,.3), rgba(79,224,208,.24));
+  border:1px solid rgba(255,255,255,.9);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,1),
+    inset 0 -10px 18px -12px rgba(107,91,214,.7),
+    0 8px 16px -8px rgba(60,50,110,.45),
+    0 20px 30px -18px rgba(60,50,110,.5);
+}
+:root[data-theme="dark"] .fdot{border-color:rgba(255,255,255,.2);color:var(--ink-2)}
+.flow-step.is-core .fdot{
+  color:#fff;
+  background:
+    radial-gradient(circle at 34% 26%, rgba(255,255,255,.9), rgba(255,255,255,.2) 34%, transparent 64%),
+    linear-gradient(140deg,#8B7BF0,#5947C4 58%,#2FB8C6);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.7),
+    0 10px 20px -8px rgba(89,71,196,.75),
+    0 26px 40px -20px rgba(60,50,110,.6),
+    0 0 34px -6px rgba(107,91,214,.6);
+}
+.flow-step.is-last .fdot{background:
+    radial-gradient(circle at 34% 26%, #fff, rgba(255,255,255,.5) 30%, rgba(255,255,255,.08) 62%),
+    linear-gradient(150deg, rgba(232,111,166,.34), rgba(199,69,139,.2))}
+.fcard{
+  padding:20px 22px; border-radius:var(--r-sm);
+  display:flex; flex-direction:column; gap:7px; flex:1 1 auto;
+}
+.fcard .fk{
+  font-family:var(--f-m); font-size:9.5px; letter-spacing:.17em; text-transform:uppercase; color:var(--iris);
+}
+.flow-step.is-core .fcard .fk{color:var(--aqua-deep)}
+.flow-step.is-last .fcard .fk{color:var(--flare)}
+:root[data-theme="dark"] .flow-step.is-last .fcard .fk{color:var(--flare-2)}
+.fcard strong{
+  font-family:var(--f-h); font-weight:800; font-size:17px; letter-spacing:-.03em; line-height:1.18; display:block;
+}
+.flow-step.is-core .fcard strong{
+  background:linear-gradient(120deg, var(--iris-deep), var(--aqua-deep));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.fcard small{display:block;font-size:13px;color:var(--ink-3);line-height:1.5}
+.flow-step.is-core .fcard{
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.99),
+    inset 0 -34px 62px -32px rgba(107,91,214,.75),
+    0 10px 20px -10px rgba(89,71,196,.4),
+    0 34px 56px -28px rgba(107,91,214,.55),
+    0 0 52px -14px rgba(107,91,214,.5);
+}
+.flow .flow-out{margin-top:6px}
+.flow .flow-out span{font-size:11.5px;padding:6px 11px}
+@media (max-width:900px){
+  .flow{grid-template-columns:repeat(2,1fr)}
+  .flow::before{display:none}
+}
+@media (max-width:540px){.flow{grid-template-columns:1fr}}
+
+/* ============================================================
+   РЕЙКА ПРЕИМУЩЕСТВ — другое оформление, отдельно от схемы
+   ============================================================ */
+.rail{
+  margin-top:clamp(52px,6vw,88px);
+  display:grid; grid-template-columns:repeat(3,1fr);
+  border-radius:var(--r);
+  border:1px dashed var(--hair-2);
+  background:linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,.06));
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  overflow:hidden;
+}
+:root[data-theme="dark"] .rail{background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015))}
+.rail li{
+  display:flex; gap:16px; align-items:flex-start;
+  padding:clamp(22px,2.4vw,30px);
+  border-right:1px dashed var(--hair);
+}
+.rail li:last-child{border-right:0}
+.rail .rn{
+  flex:0 0 auto; font-family:var(--f-m); font-size:11px; letter-spacing:.14em;
+  color:var(--aqua-deep); padding-top:3px;
+}
+.rail strong{
+  display:block; font-family:var(--f-d); font-weight:600; font-size:16px;
+  letter-spacing:-.012em; line-height:1.28;
+}
+.rail small{display:block;margin-top:7px;font-size:13.5px;color:var(--ink-3);line-height:1.5}
+@media (max-width:860px){
+  .rail{grid-template-columns:1fr}
+  .rail li{border-right:0;border-bottom:1px dashed var(--hair)}
+  .rail li:last-child{border-bottom:0}
+}
+
+/* ============================================================
+   ЕДИНАЯ ШИРИНА ВСЕХ БЛОКОВ
+   ============================================================ */
+.wrap, .narrow{max-width:1180px;margin-left:auto;margin-right:auto}
+.sec .lead{max-width:64ch}
+
+/* ============================================================
+   РАЗНОЕ ОФОРМЛЕНИЕ СЕКЦИЙ
+   ============================================================ */
+
+/* — потери: призрачные номера, сдвиг по вертикали, розовая грань — */
+#poteri .pain{
+  position:relative; overflow:hidden; padding:30px 30px 26px;
+  border-radius:var(--r-sm);
+}
+#poteri .pain .edge{
+  position:absolute; left:0; top:16%; bottom:16%; width:3px; border-radius:3px;
+  background:linear-gradient(180deg, var(--flare-2), var(--flare));
+  box-shadow:0 0 18px rgba(199,69,139,.5);
+}
+#poteri .pain .n{
+  position:absolute; right:16px; top:6px;
+  font-family:var(--f-h); font-weight:800; font-size:62px; letter-spacing:-.06em;
+  color:var(--ink); opacity:.06; pointer-events:none;
+}
+#poteri .pain h3{font-family:var(--f-h);font-weight:700;font-size:18.5px;letter-spacing:-.026em;max-width:22ch}
+@media (min-width:1001px){
+  #poteri .g3 > *:nth-child(3n+2){transform:perspective(1100px) translateY(20px)}
+  #poteri .g3 > *:nth-child(3n+2):hover{transform:perspective(1100px) translateY(14px) rotateX(2.2deg)}
+}
+
+/* — отличие: плоские перламутровые плиты с верхней гранью — */
+#otlichie .why-card{
+  border-radius:var(--r-sm); padding-top:clamp(30px,3vw,38px); overflow:hidden; position:relative;
+}
+#otlichie .why-card .wn::before{
+  content:""; position:absolute; left:0; right:0; top:0; height:4px;
+  background:linear-gradient(90deg, var(--iris-2), var(--aqua-2) 58%, var(--flare-2));
+  opacity:.9;
+}
+#otlichie .why-card:nth-child(2) .wn::before{background:linear-gradient(90deg, var(--aqua-2), var(--iris-2))}
+#otlichie .why-card:nth-child(3) .wn::before{background:linear-gradient(90deg, var(--flare-2), var(--iris-2))}
+
+/* — как устроено: вертикальная рейка и объёмный номер — */
+#kak-ustroeno .steps6{position:relative}
+#kak-ustroeno .steps6::before{
+  content:""; position:absolute; left:calc(clamp(24px,2.8vw,38px) + 26px); top:40px; bottom:40px; width:1px;
+  background:linear-gradient(180deg, transparent, var(--hair-2) 8%, var(--hair-2) 92%, transparent);
+}
+@media (max-width:900px){#kak-ustroeno .steps6::before{display:none}}
+#kak-ustroeno .st-tag{position:relative;z-index:2}
+#kak-ustroeno .st-n{
+  width:54px;height:54px;border-radius:50%;display:grid;place-items:center;
+  font-size:22px;font-weight:800;letter-spacing:-.02em;
+  background:
+    radial-gradient(circle at 34% 26%, #fff, rgba(255,255,255,.5) 30%, rgba(255,255,255,.06) 62%),
+    linear-gradient(148deg, rgba(139,123,240,.34), rgba(79,224,208,.26));
+  -webkit-background-clip:border-box;background-clip:border-box;color:var(--ink);
+  border:1px solid rgba(255,255,255,.92);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,1),
+    inset 0 -12px 20px -14px rgba(107,91,214,.7),
+    0 10px 20px -10px rgba(60,50,110,.5),
+    0 24px 34px -20px rgba(60,50,110,.5);
+}
+:root[data-theme="dark"] #kak-ustroeno .st-n{border-color:rgba(255,255,255,.2);color:var(--ink)}
+#kak-ustroeno .st{border-radius:var(--r)}
+#kak-ustroeno .st:nth-child(even){
+  background:
+    linear-gradient(157deg, rgba(255,255,255,.82), rgba(255,255,255,.34) 46%, rgba(255,255,255,.6)),
+    linear-gradient(292deg, rgba(139,123,240,.2), rgba(79,224,208,.14) 40%, rgba(232,111,166,.12));
+}
+:root[data-theme="dark"] #kak-ustroeno .st:nth-child(even){
+  background:
+    linear-gradient(157deg, rgba(255,255,255,.115), rgba(255,255,255,.04) 46%, rgba(255,255,255,.08)),
+    linear-gradient(292deg, rgba(139,123,240,.2), rgba(79,224,208,.13) 40%, rgba(232,111,166,.1));
+}
+
+/* — пульт: рамка «устройства» — */
+#chat .console{
+  border-radius:calc(var(--r) + 6px);
+  padding:clamp(24px,2.8vw,36px);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.99),
+    inset 0 -40px 70px -36px rgba(107,91,214,.62),
+    0 3px 6px rgba(60,50,110,.08),
+    0 30px 54px -26px rgba(60,50,110,.45),
+    0 80px 110px -70px rgba(60,50,110,.6);
+}
+#chat .tabs{
+  padding:7px; box-shadow:inset 0 2px 6px rgba(60,50,110,.1), inset 0 1px 0 rgba(255,255,255,.6);
+  background:linear-gradient(180deg, rgba(255,255,255,.24), rgba(255,255,255,.06));
+}
+#chat .tab[aria-selected="true"]{
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.98),
+    0 2px 0 rgba(160,150,205,.3),
+    0 8px 16px -8px rgba(60,50,110,.4);
+}
+
+/* — пакеты: средний приподнят по-настоящему — */
+@media (min-width:1001px){
+  #pakety .pack.hi{transform:perspective(1100px) translateY(-16px) scale(1.025)}
+  #pakety .pack.hi:hover{transform:perspective(1100px) translateY(-22px) scale(1.03)}
+}
+#pakety .pack.hi{
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.99),
+    inset 0 -44px 76px -36px rgba(107,91,214,.7),
+    0 4px 8px rgba(60,50,110,.1),
+    0 36px 60px -26px rgba(107,91,214,.5),
+    0 90px 120px -70px rgba(60,50,110,.7),
+    0 0 60px -16px rgba(107,91,214,.45);
+}
+#pakety .pack .tag{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5), 0 6px 16px -6px rgba(107,91,214,.8);
+}
+#pakety .opts{border-radius:var(--r);border-style:dashed}
+
+/* — контроль данных: строки с чередующимся тоном — */
+#bezopasnost .safe{padding:clamp(6px,1vw,12px) clamp(14px,1.8vw,22px)}
+#bezopasnost .safe li{padding:20px 14px;border-radius:var(--r-xs)}
+#bezopasnost .safe li:nth-child(odd){background:rgba(255,255,255,.22)}
+:root[data-theme="dark"] #bezopasnost .safe li:nth-child(odd){background:rgba(255,255,255,.04)}
+#bezopasnost .safe .sk{min-width:104px}
+
+/* — вопросы: две колонки на широком экране — */
+@media (min-width:1001px){
+  #faq .faq{
+    display:grid; grid-template-columns:repeat(2,1fr); gap:1px;
+    align-items:start;
+    background:var(--hair);
+  }
+}
+#faq summary{padding:24px 26px;font-size:15.5px}
+#faq details p{padding:0 26px 24px}
+
+/* — финал: широкое сияние — */
+#dalshe .final{
+  border-radius:calc(var(--r) + 10px);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.99),
+    inset 0 -60px 110px -50px rgba(107,91,214,.6),
+    0 4px 8px rgba(60,50,110,.08),
+    0 40px 70px -30px rgba(60,50,110,.45),
+    0 110px 140px -90px rgba(60,50,110,.7);
+}
+#dalshe .final .final-glow{
+  position:absolute; inset:auto -20% -70% -20%; height:70%;
+  background:radial-gradient(ellipse at center, var(--halo-a), transparent 66%);
+  filter:blur(40px); opacity:.55; pointer-events:none;
+}
+#dalshe .final > *{position:relative;z-index:1}
+#dalshe .final h2{font-family:var(--f-h);font-weight:800;letter-spacing:-.04em}
+#dalshe .final-out li{border-radius:var(--r-xs)}
+
+/* мелочи */
+.metrics{box-shadow:var(--sh-lift)}
+.label{margin-bottom:20px}
+@media (max-width:520px){.btn{padding:15px 26px}}
+
+
+/* ============================================================
+   PRISM · v3 — планета сквозь стекло, единая сетка, лента, сигнал
+   ============================================================ */
+
+/* ---------- подложка: маску снимаем, яркость ведёт скрипт ---------- */
+:root{ --core-near:.26; --core-far:.44; }
+:root[data-theme="dark"]{ --core-near:.40; --core-far:.60; }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --core-near:.40; --core-far:.60; }
+}
+#stage{
+  -webkit-mask:none; mask:none;
+  opacity:var(--core-near);
+  transition:none;
+}
+@media (max-width:760px){ :root{ --core-near:.2; --core-far:.34 } }
+@media (prefers-reduced-motion: reduce){ :root{ --core-near:.22; --core-far:.22 } }
+
+/* холст почти прозрачный — планета должна читаться насквозь */
+.cosmos{opacity:.72}
+.cosmos::after{opacity:.22}
+
+/* ---------- стекло тоньше: сквозь блоки видно планету ---------- */
+.glass{
+  background:
+    linear-gradient(157deg, rgba(255,255,255,.5), rgba(255,255,255,.19) 46%, rgba(255,255,255,.36)),
+    linear-gradient(112deg, rgba(139,123,240,.13), rgba(79,224,208,.1) 38%, rgba(232,111,166,.08) 68%, rgba(150,190,255,.12));
+  border-color:rgba(255,255,255,.78);
+  backdrop-filter:blur(13px) saturate(1.7);
+  -webkit-backdrop-filter:blur(13px) saturate(1.7);
+}
+.glass::after{opacity:.5}
+:root[data-theme="dark"] .glass{
+  background:
+    linear-gradient(157deg, rgba(255,255,255,.085), rgba(255,255,255,.03) 46%, rgba(255,255,255,.055)),
+    linear-gradient(112deg, rgba(139,123,240,.15), rgba(79,224,208,.1) 38%, rgba(232,111,166,.09));
+  border-color:rgba(255,255,255,.16);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .glass{
+    background:
+      linear-gradient(157deg, rgba(255,255,255,.085), rgba(255,255,255,.03) 46%, rgba(255,255,255,.055)),
+      linear-gradient(112deg, rgba(139,123,240,.15), rgba(79,224,208,.1) 38%, rgba(232,111,166,.09));
+    border-color:rgba(255,255,255,.16);
+  }
+}
+.xtal, .flow-node, .st-card, .delay-item, .st-tags span, .flow-out span, .opt, .state,
+.final-out li, .metric, .step, details, .outcome, .st-note{
+  background:
+    linear-gradient(157deg, rgba(255,255,255,.46), rgba(255,255,255,.16) 46%, rgba(255,255,255,.3)),
+    linear-gradient(112deg, rgba(139,123,240,.1), rgba(79,224,208,.08) 44%, rgba(232,111,166,.07));
+  border-color:rgba(255,255,255,.7);
+}
+/* текстовые полотна оставляем чуть плотнее — читаемость важнее */
+#chat .console, #faq details, .safe{
+  background:
+    linear-gradient(157deg, rgba(255,255,255,.62), rgba(255,255,255,.3) 46%, rgba(255,255,255,.48)),
+    linear-gradient(112deg, rgba(139,123,240,.12), rgba(79,224,208,.09) 44%, rgba(232,111,166,.08));
+}
+.hdr-in{background:rgba(255,255,255,.5)}
+:root[data-theme="dark"] .hdr-in{background:rgba(255,255,255,.07)}
+
+/* ============================================================
+   ЕДИНЫЙ РАЗМЕР БЛОКОВ
+   ============================================================ */
+:root{ --card-pad:clamp(24px,2.7vw,34px); --stack:clamp(18px,2vw,24px); }
+
+.g2,.g3,.g4,.why,.packs,.proof,.weeks,.flow,.steps6{gap:var(--stack)}
+
+.card,.pain,.why-card,.proof-card,.pack,.out,.week,.opts,.delay,
+#poteri .pain,#otlichie .why-card,#pakety .pack{padding:var(--card-pad)}
+.st{padding:calc(var(--card-pad) + 4px)}
+
+.pain,.why-card,.proof-card,.pack,.out,.week,.st,.fcard,.opts,.loop,.safe{border-radius:var(--r)}
+.st-card,.delay-item,.st-note,.outcome,.final-out li{border-radius:var(--r-sm)}
+
+/* одинаковая высота заголовков карточек */
+.pain h3,.why-card h3,.proof-card h3,.week h3,.out h3{min-height:2.5em;display:flex;align-items:flex-start}
+@media (max-width:680px){.pain h3,.why-card h3,.proof-card h3,.week h3,.out h3{min-height:0}}
+
+.pain,.why-card,.proof-card,.week,.out{display:flex;flex-direction:column;gap:12px;height:100%}
+.pain .cost,.mini{margin-top:auto}
+
+.hd{margin-bottom:clamp(32px,3.4vw,48px)}
+.sec{padding:calc(var(--gap)/2) var(--pad)}
+
+/* ============================================================
+   СИГНАЛЬНЫЕ ТОЧКИ У НАЗВАНИЙ БЛОКОВ
+   ============================================================ */
+.label{position:relative;padding-left:2px}
+.label::before{
+  position:relative; z-index:2;
+  animation:sigDot 2.8s cubic-bezier(.4,0,.3,1) infinite;
+}
+.label::after{
+  content:""; position:absolute; left:-6px; top:50%; width:18px; height:18px; margin-top:-9px;
+  border-radius:50%; border:1px solid var(--iris); opacity:0; pointer-events:none;
+  animation:sigWave 2.8s cubic-bezier(.2,.7,.3,1) infinite;
+}
+.label.aq::after{border-color:var(--aqua)}
+.label.fl::after{border-color:var(--flare)}
+@keyframes sigDot{
+  0%,100%{box-shadow:0 0 0 4px var(--iris-soft), 0 0 0 0 rgba(107,91,214,.55);transform:scale(1)}
+  14%{transform:scale(1.35)}
+  55%{box-shadow:0 0 0 4px var(--iris-soft), 0 0 0 13px rgba(107,91,214,0);transform:scale(1)}
+}
+.label.aq::before{animation-name:sigDotAq}
+@keyframes sigDotAq{
+  0%,100%{box-shadow:0 0 0 4px var(--aqua-soft), 0 0 0 0 rgba(23,191,175,.55);transform:scale(1)}
+  14%{transform:scale(1.35)}
+  55%{box-shadow:0 0 0 4px var(--aqua-soft), 0 0 0 13px rgba(23,191,175,0);transform:scale(1)}
+}
+.label.fl::before{animation-name:sigDotFl}
+@keyframes sigDotFl{
+  0%,100%{box-shadow:0 0 0 4px var(--flare-soft), 0 0 0 0 rgba(199,69,139,.5);transform:scale(1)}
+  14%{transform:scale(1.35)}
+  55%{box-shadow:0 0 0 4px var(--flare-soft), 0 0 0 13px rgba(199,69,139,0);transform:scale(1)}
+}
+@keyframes sigWave{
+  0%{transform:scale(.35);opacity:0}
+  12%{opacity:.65}
+  100%{transform:scale(2.5);opacity:0}
+}
+@media (prefers-reduced-motion: reduce){
+  .label::before,.label::after{animation:none}
+  .label::after{opacity:.25;transform:scale(1)}
+}
+
+/* ============================================================
+   ЛЕНТА МЁБИУСА
+   ============================================================ */
+.ribbon{
+  position:relative; z-index:1;
+  margin-top:clamp(58px,6.4vw,96px);
+  margin-inline:calc(50% - 50vw); width:100vw;
+  padding:clamp(30px,3.6vw,54px) 0;
+  overflow:hidden; perspective:1200px;
+  -webkit-mask:linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask:linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+.rib-band{
+  position:relative; overflow:hidden;
+  padding:clamp(17px,1.9vw,25px) 0;
+  transform-style:preserve-3d;
+}
+/* передняя сторона ленты */
+.rib-front{
+  transform:rotate(-1.4deg) rotateX(7deg);
+  border-radius:3px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.06) 42%, rgba(255,255,255,0) 62%, rgba(255,255,255,.24)),
+    linear-gradient(90deg,
+      rgba(255,255,255,.78) 0%, rgba(255,255,255,.4) 9%,
+      rgba(139,123,240,.3) 21%, rgba(255,255,255,.72) 32%,
+      rgba(255,255,255,.34) 44%, rgba(79,224,208,.28) 55%,
+      rgba(255,255,255,.78) 68%, rgba(232,111,166,.24) 80%,
+      rgba(255,255,255,.4) 91%, rgba(255,255,255,.78) 100%);
+  border-top:1px solid rgba(255,255,255,.92);
+  border-bottom:1px solid rgba(255,255,255,.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.95),
+    inset 0 -20px 34px -26px rgba(107,91,214,.6),
+    0 18px 34px -22px rgba(60,50,110,.5),
+    0 44px 60px -46px rgba(60,50,110,.6);
+  backdrop-filter:blur(11px) saturate(1.6);
+  -webkit-backdrop-filter:blur(11px) saturate(1.6);
+}
+/* изнанка: уходит за переднюю, идёт в обратную сторону — петля замыкается */
+.rib-back{
+  position:absolute; left:-5%; right:-5%; top:50%;
+  transform:translateY(calc(-50% - 30px)) rotate(3.4deg) rotateX(-10deg);
+  opacity:.3; z-index:-1; filter:blur(.6px);
+  background:linear-gradient(90deg,
+    rgba(139,123,240,.16), rgba(255,255,255,.34) 30%, rgba(79,224,208,.14) 58%, rgba(255,255,255,.3) 86%, rgba(139,123,240,.16));
+  border-top:1px solid rgba(255,255,255,.5);
+  border-bottom:1px solid var(--hair-2);
+}
+:root[data-theme="dark"] .rib-front{
+  border-top-color:rgba(255,255,255,.24); border-bottom-color:rgba(255,255,255,.1);
+}
+/* место перекрута */
+.rib-front::after{
+  content:""; position:absolute; left:50%; top:-30%; width:74px; height:160%;
+  transform:translateX(-50%) rotate(9deg);
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.85) 46%, rgba(255,255,255,.15) 62%, transparent);
+  opacity:.55; pointer-events:none;
+}
+.rib-track{
+  display:flex; align-items:center; width:max-content;
+  animation:ribRun 46s linear infinite;
+}
+.rib-back .rib-track{animation-duration:62s;animation-direction:reverse;opacity:.9}
+@keyframes ribRun{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ribbon:hover .rib-track{animation-play-state:paused}
+
+.rib-item{
+  display:inline-flex; align-items:baseline; gap:13px; white-space:nowrap;
+  padding:0 clamp(26px,2.8vw,48px);
+  border-right:1px dashed var(--hair-2);
+}
+.rib-item i{
+  font-style:normal; font-family:var(--f-m); font-size:11px; letter-spacing:.16em;
+  color:var(--aqua-deep);
+}
+.rib-item b{
+  font-family:var(--f-d); font-weight:600; font-size:clamp(15px,1.5vw,17.5px);
+  letter-spacing:-.014em; color:var(--ink);
+}
+.rib-item em{
+  font-style:normal; font-size:clamp(13px,1.3vw,14.5px); color:var(--ink-3);
+}
+.rib-item em::before{content:"— "; color:var(--ink-4)}
+.rib-back .rib-item b,.rib-back .rib-item em,.rib-back .rib-item i{
+  color:var(--ink-4); font-size:13px; letter-spacing:.02em;
+}
+@media (prefers-reduced-motion: reduce){
+  .rib-track{animation:none}
+  .rib-back{display:none}
+}
+@media (max-width:640px){
+  .rib-item em{display:none}
+  .rib-back{display:none}
+  .rib-track{animation-duration:30s}
+}
+
+
+/* ============================================================
+   PRISM · v4 — светлая планета, честное стекло, ровные блоки
+   ============================================================ */
+
+/* ---------- планета: светлее, прозрачнее, компактнее ---------- */
+:root{ --core-near:.24; --core-far:.38; }
+:root[data-theme="dark"]{ --core-near:.34; --core-far:.48; }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --core-near:.34; --core-far:.48; }
+}
+@media (max-width:760px){ :root{ --core-near:.17; --core-far:.28 } }
+@media (prefers-reduced-motion: reduce){ :root{ --core-near:.18; --core-far:.18 } }
+#stage{filter:brightness(1.1) saturate(.88) contrast(.98)}
+:root[data-theme="dark"] #stage{filter:brightness(1.05) saturate(.95)}
+
+.cosmos{opacity:.6}
+.cosmos::after{opacity:.16}
+
+/* ---------- стекло: реально прозрачное, планета читается насквозь ---------- */
+.glass{
+  background:
+    linear-gradient(157deg, rgba(255,255,255,.4), rgba(255,255,255,.13) 46%, rgba(255,255,255,.28)),
+    linear-gradient(112deg, rgba(139,123,240,.1), rgba(79,224,208,.08) 38%, rgba(232,111,166,.06) 68%, rgba(150,190,255,.09));
+  border-color:rgba(255,255,255,.7);
+  backdrop-filter:blur(9px) saturate(1.55);
+  -webkit-backdrop-filter:blur(9px) saturate(1.55);
+}
+:root[data-theme="dark"] .glass{
+  background:
+    linear-gradient(157deg, rgba(255,255,255,.07), rgba(255,255,255,.025) 46%, rgba(255,255,255,.045)),
+    linear-gradient(112deg, rgba(139,123,240,.13), rgba(79,224,208,.09) 38%, rgba(232,111,166,.08));
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .glass{
+    background:
+      linear-gradient(157deg, rgba(255,255,255,.07), rgba(255,255,255,.025) 46%, rgba(255,255,255,.045)),
+      linear-gradient(112deg, rgba(139,123,240,.13), rgba(79,224,208,.09) 38%, rgba(232,111,166,.08));
+  }
+}
+.xtal, .flow-node, .st-card, .delay-item, .st-tags span, .flow-out span, .opt, .state,
+.final-out li, .metric, .step, details, .outcome, .st-note{
+  background:
+    linear-gradient(157deg, rgba(255,255,255,.36), rgba(255,255,255,.12) 46%, rgba(255,255,255,.24)),
+    linear-gradient(112deg, rgba(139,123,240,.08), rgba(79,224,208,.06) 44%, rgba(232,111,166,.05));
+  border-color:rgba(255,255,255,.64);
+}
+/* текстовые полотна больше не глушим — они тоже стеклянные */
+#chat .console, #faq details, .safe{
+  background:
+    linear-gradient(157deg, rgba(255,255,255,.42), rgba(255,255,255,.15) 46%, rgba(255,255,255,.3)),
+    linear-gradient(112deg, rgba(139,123,240,.1), rgba(79,224,208,.07) 44%, rgba(232,111,166,.06));
+}
+#bezopasnost .safe li:nth-child(odd){background:rgba(255,255,255,.12)}
+.hdr-in{background:rgba(255,255,255,.42)}
+.tabs, #chat .tabs{background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.04))}
+
+/* ============================================================
+   ГЕРОЙ: девушка крупнее, края растворяются
+   ============================================================ */
+.orbit{max-width:940px;width:152%;margin-left:-26%}
+@media (max-width:980px){.orbit{width:118%;margin-left:-9%;max-width:700px}}
+@media (max-width:600px){.orbit{width:124%;margin-left:-12%}}
+.crystal-ring{width:114%;filter:drop-shadow(0 56px 96px rgba(60,50,110,.24))}
+.cr-sphere{filter:blur(.5px)}
+
+h1{font-size:clamp(33px,4.8vw,60px)}
+
+/* ============================================================
+   СХЕМА 01–04: карточки одного размера
+   ============================================================ */
+.flow{align-items:stretch}
+.flow-step{height:100%}
+.fcard{flex:1 1 auto;justify-content:flex-start;padding:22px 22px 24px}
+.fcard small{margin-top:2px}
+
+/* ============================================================
+   ЛЕНТА: просто бегущая прозрачная полоса
+   ============================================================ */
+.ribbon{
+  position:relative; z-index:1; width:100%;
+  margin:0; padding:0;
+  overflow:hidden; perspective:none;
+  border-top:1px solid var(--hair);
+  border-bottom:1px solid var(--hair);
+  background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.04));
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  -webkit-mask:linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+  mask:linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+}
+.rib-band{
+  position:static; overflow:hidden; padding:clamp(15px,1.7vw,22px) 0;
+  transform:none; background:none; border:0; box-shadow:none;
+  backdrop-filter:none; -webkit-backdrop-filter:none; border-radius:0;
+}
+.rib-band::after{display:none}
+.rib-back{display:none}
+.rib-track{animation-duration:52s}
+.rib-item{border-right:0; padding:0 clamp(24px,2.6vw,44px); gap:12px}
+.rib-item::after{
+  content:"·"; margin-left:clamp(24px,2.6vw,44px);
+  color:var(--ink-4); font-size:18px; line-height:1;
+}
+.rib-item b{font-family:var(--f-d);font-weight:600;font-size:clamp(14.5px,1.4vw,16.5px);color:var(--ink-2)}
+.rib-item em{font-size:clamp(13px,1.3vw,14px);color:var(--ink-4)}
+.rib-item i{color:var(--ink-4)}
+
+/* ============================================================
+   ПАКЕТЫ: ровные блоки
+   ============================================================ */
+.packs{align-items:stretch}
+#pakety .pack, #pakety .pack.hi{
+  height:100%; margin:0;
+}
+@media (min-width:1001px){
+  #pakety .pack.hi{transform:perspective(1100px)}
+  #pakety .pack.hi:hover{transform:perspective(1100px) translateY(-8px)}
+}
+#pakety .pack.hi{
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.95),
+    inset 0 -40px 70px -36px rgba(107,91,214,.6),
+    0 3px 6px rgba(60,50,110,.08),
+    0 30px 52px -26px rgba(107,91,214,.45),
+    0 0 0 1px rgba(107,91,214,.3),
+    0 70px 100px -70px rgba(60,50,110,.6);
+}
+#pakety .pack .pack-top{min-height:38px}
+#pakety .pack .who-for{min-height:3.2em}
+#pakety .pack ul{flex:1 1 auto}
+@media (max-width:1000px){
+  #pakety .pack .who-for{min-height:0}
+}
+
+
+/* ============================================================
+   PRISM · v5 — стеклянная капля: кнопки и блоки по одной формуле
+   fill rgba(255,255,255,.1–.2) + blur/saturate + белая кромка
+   + мокрый блик сверху + мягкая тень снизу
+   ============================================================ */
+
+:root{
+  --gl-fill:rgba(255,255,255,.17);
+  --gl-fill-2:rgba(255,255,255,.11);
+  --gl-edge:rgba(255,255,255,.46);
+  --gl-tint:linear-gradient(112deg, rgba(139,123,240,.08), rgba(79,224,208,.055) 45%, rgba(232,111,166,.05) 78%, rgba(150,190,255,.07));
+  --gl-blur:blur(16px) saturate(180%);
+  --gl-lift:
+    inset 0 1px 1px rgba(255,255,255,.7),
+    inset 0 -2px 6px rgba(255,255,255,.2),
+    0 8px 24px rgba(38,31,78,.16),
+    0 26px 52px -26px rgba(38,31,78,.3);
+}
+:root[data-theme="dark"]{
+  --gl-fill:rgba(255,255,255,.1);
+  --gl-fill-2:rgba(255,255,255,.06);
+  --gl-edge:rgba(255,255,255,.24);
+  --gl-lift:
+    inset 0 1px 1px rgba(255,255,255,.28),
+    inset 0 -2px 6px rgba(255,255,255,.07),
+    0 8px 24px rgba(0,0,0,.45),
+    0 30px 60px -28px rgba(0,0,0,.8);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --gl-fill:rgba(255,255,255,.1);
+    --gl-fill-2:rgba(255,255,255,.06);
+    --gl-edge:rgba(255,255,255,.24);
+    --gl-lift:
+      inset 0 1px 1px rgba(255,255,255,.28),
+      inset 0 -2px 6px rgba(255,255,255,.07),
+      0 8px 24px rgba(0,0,0,.45),
+      0 30px 60px -28px rgba(0,0,0,.8);
+  }
+}
+
+/* ---------------- БЛОКИ ---------------- */
+.glass{
+  background:var(--gl-tint), var(--gl-fill);
+  border:1px solid var(--gl-edge);
+  backdrop-filter:var(--gl-blur);
+  -webkit-backdrop-filter:var(--gl-blur);
+  box-shadow:var(--gl-lift);
+  transition:transform .25s ease, background .25s ease, box-shadow .25s ease;
+}
+/* радужная кромка остаётся, но приглушённая — край держит белая линия */
+.glass::before{opacity:.36}
+/* мокрый блик сверху */
+.glass::after{
+  content:""; position:absolute; top:1px; left:1px; right:1px; z-index:-1;
+  height:46%; max-height:210px;
+  border-radius:inherit;
+  background:linear-gradient(rgba(255,255,255,.42), rgba(255,255,255,0));
+  opacity:1; pointer-events:none;
+}
+:root[data-theme="dark"] .glass::after{background:linear-gradient(rgba(255,255,255,.16), rgba(255,255,255,0))}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .glass::after{background:linear-gradient(rgba(255,255,255,.16), rgba(255,255,255,0))}
+}
+.glass:hover{background:var(--gl-tint), rgba(255,255,255,.22)}
+:root[data-theme="dark"] .glass:hover{background:var(--gl-tint), rgba(255,255,255,.13)}
+
+/* мелкие кристаллы — та же формула, тоньше */
+.xtal, .flow-node, .st-card, .delay-item, .st-tags span, .flow-out span, .opt, .state,
+.final-out li, .metric, .step, details, .outcome, .st-note{
+  background:var(--gl-tint), var(--gl-fill-2);
+  border:1px solid var(--gl-edge);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.6),
+    inset 0 -2px 6px rgba(255,255,255,.16),
+    0 6px 18px rgba(38,31,78,.12);
+  backdrop-filter:blur(12px) saturate(180%);
+  -webkit-backdrop-filter:blur(12px) saturate(180%);
+}
+#chat .console, #faq details, .safe{background:var(--gl-tint), rgba(255,255,255,.2)}
+:root[data-theme="dark"] #chat .console,
+:root[data-theme="dark"] #faq details,
+:root[data-theme="dark"] .safe{background:var(--gl-tint), rgba(255,255,255,.09)}
+#bezopasnost .safe li:nth-child(odd){background:rgba(255,255,255,.1)}
+.st-note{background:var(--aqua-soft), rgba(255,255,255,.12)}
+
+.hdr-in{
+  background:var(--gl-tint), rgba(255,255,255,.22);
+  border:1px solid var(--gl-edge);
+  backdrop-filter:blur(18px) saturate(180%);
+  -webkit-backdrop-filter:blur(18px) saturate(180%);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.75),
+    inset 0 -2px 6px rgba(255,255,255,.2),
+    0 8px 24px rgba(38,31,78,.16);
+}
+:root[data-theme="dark"] .hdr-in{background:var(--gl-tint), rgba(255,255,255,.09)}
+
+#pakety .pack.hi{
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.8),
+    inset 0 -2px 6px rgba(255,255,255,.24),
+    0 0 0 1px rgba(107,91,214,.34),
+    0 10px 30px rgba(38,31,78,.2),
+    0 36px 64px -30px rgba(107,91,214,.42);
+}
+
+/* ---------------- КНОПКИ ---------------- */
+.btn{
+  position:relative; isolation:isolate; overflow:hidden;
+  padding:16px 34px; border-radius:999px;
+  transition:transform .25s ease, background .25s ease, box-shadow .25s ease, filter .25s ease;
+}
+.btn::after{display:none}
+/* мокрый блик-полоска сверху */
+.btn::before{
+  content:''; position:absolute; inset:1px 1px 50%; z-index:-1;
+  border-radius:999px 999px 60% 60% / 999px 999px 30% 30%;
+  background:linear-gradient(rgba(255,255,255,.45), rgba(255,255,255,0));
+  pointer-events:none;
+}
+.btn:hover{transform:translateY(-2px) scale(1.03)}
+.btn:active{transform:translateY(0) scale(.98)}
+
+/* прозрачная стеклянная */
+.btn.g{
+  color:var(--ink);
+  background:var(--gl-tint), rgba(255,255,255,.24);
+  border:1px solid rgba(255,255,255,.6);
+  backdrop-filter:blur(14px) saturate(180%);
+  -webkit-backdrop-filter:blur(14px) saturate(180%);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.75),
+    inset 0 -2px 6px rgba(255,255,255,.22),
+    0 8px 24px rgba(38,31,78,.2);
+}
+.btn.g:hover{
+  background:var(--gl-tint), rgba(255,255,255,.36);
+  box-shadow:
+    inset 0 1px 2px rgba(255,255,255,.9),
+    0 12px 30px rgba(38,31,78,.26);
+}
+.btn.g:active{
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.6),
+    0 5px 14px rgba(38,31,78,.2);
+}
+:root[data-theme="dark"] .btn.g{
+  background:var(--gl-tint), rgba(255,255,255,.12);
+  border-color:rgba(255,255,255,.3);
+}
+
+/* фирменная — тот же объём поверх цветного стекла */
+.btn.p{
+  color:#fff;
+  background:linear-gradient(132deg,#A99BFF 0%, #7A69E4 30%, #5947C4 56%, #3F7FD6 80%, #2FB8C6 100%);
+  border:1px solid rgba(255,255,255,.42);
+  backdrop-filter:blur(14px) saturate(180%);
+  -webkit-backdrop-filter:blur(14px) saturate(180%);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.6),
+    inset 0 -2px 6px rgba(255,255,255,.18),
+    0 8px 24px rgba(30,20,90,.3),
+    0 18px 40px -16px rgba(89,71,196,.5);
+}
+.btn.p:hover{
+  filter:saturate(1.08);
+  box-shadow:
+    inset 0 1px 2px rgba(255,255,255,.8),
+    inset 0 -2px 6px rgba(255,255,255,.2),
+    0 12px 30px rgba(30,20,90,.34),
+    0 26px 50px -18px rgba(89,71,196,.55);
+}
+.btn.p:active{
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.55),
+    0 5px 16px rgba(30,20,90,.3);
+}
+.btn.sm{padding:11px 22px;font-size:13.5px}
+
+/* ---------------- ПИЛЮЛИ И ВКЛАДКИ ---------------- */
+.chip, .tab[aria-selected="true"], .state, .opt, .st-tags span, .flow-out span,
+.pack .tag, .st-live, .safe .sk{
+  backdrop-filter:blur(12px) saturate(180%);
+  -webkit-backdrop-filter:blur(12px) saturate(180%);
+}
+.chip, .tab[aria-selected="true"], .state, .opt, .st-tags span, .flow-out span{
+  background:var(--gl-tint), rgba(255,255,255,.2);
+  border:1px solid rgba(255,255,255,.55);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.7),
+    inset 0 -2px 5px rgba(255,255,255,.16),
+    0 6px 16px rgba(38,31,78,.14);
+}
+.chip::after{display:none}
+.tabs{
+  background:rgba(255,255,255,.1);
+  border:1px solid var(--gl-edge);
+  backdrop-filter:blur(12px) saturate(180%);
+  -webkit-backdrop-filter:blur(12px) saturate(180%);
+  box-shadow:inset 0 1px 2px rgba(38,31,78,.08);
+}
+.tab{transition:transform .2s ease, color .2s, background .2s, box-shadow .2s}
+.tab:hover{transform:translateY(-1px)}
+
+/* объёмные шары схемы и шагов — тот же мокрый блик */
+.fdot, #kak-ustroeno .st-n, .pillar .glow{
+  box-shadow:
+    inset 0 1.5px 1px rgba(255,255,255,.9),
+    inset 0 -3px 8px rgba(255,255,255,.25),
+    0 8px 22px rgba(38,31,78,.2);
+  border:1px solid rgba(255,255,255,.6);
+}
+.flow-step.is-core .fdot{
+  border-color:rgba(255,255,255,.5);
+  box-shadow:
+    inset 0 1.5px 1px rgba(255,255,255,.7),
+    0 8px 22px rgba(89,71,196,.5),
+    0 0 26px -6px rgba(107,91,214,.55);
+}
+
+@media (prefers-reduced-motion: reduce){
+  .btn:hover,.btn:active,.tab:hover{transform:none}
+}
+
+
+/* ============================================================
+   PRISM · v6 — кнопки liquid glass по спецификации
+   fill rgba(255,255,255,.12) · blur(14px) saturate(180%)
+   radius 999px · edge 1px rgba(255,255,255,.35)
+   inset-блик сверху · мягкая внешняя тень
+   hover: подъём + усиление блика
+   ============================================================ */
+
+.btn{
+  position:relative; isolation:isolate; overflow:hidden;
+  display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  padding:16px 34px;
+  border-radius:999px;
+  cursor:pointer;
+
+  /* само стекло */
+  background:rgba(255,255,255,.12);
+  backdrop-filter:blur(14px) saturate(180%);
+  -webkit-backdrop-filter:blur(14px) saturate(180%);
+
+  /* край стекла */
+  border:1px solid rgba(255,255,255,.35);
+
+  /* объём: блик сверху, подсветка снизу, внешняя тень */
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.55),
+    inset 0 -2px 6px rgba(255,255,255,.15),
+    0 8px 24px rgba(38,31,78,.25);
+
+  transition:transform .25s ease, background .25s ease,
+             box-shadow .25s ease, border-color .25s ease, filter .25s ease;
+}
+
+/* мокрый блик-полоска сверху */
+.btn::before{
+  content:''; position:absolute; inset:1px 1px 50%; z-index:-1;
+  border-radius:999px 999px 60% 60% / 999px 999px 30% 30%;
+  background:linear-gradient(rgba(255,255,255,.45), rgba(255,255,255,0));
+  pointer-events:none;
+  transition:background .25s ease;
+}
+.btn::after{display:none}
+
+/* подъём и усиление блика */
+.btn:hover{
+  transform:translateY(-3px) scale(1.02);
+  background:rgba(255,255,255,.2);
+  border-color:rgba(255,255,255,.55);
+  box-shadow:
+    inset 0 1px 2px rgba(255,255,255,.7),
+    inset 0 -2px 8px rgba(255,255,255,.2),
+    0 12px 30px rgba(38,31,78,.3);
+}
+.btn:hover::before{
+  background:linear-gradient(rgba(255,255,255,.68), rgba(255,255,255,0));
+}
+.btn:active{
+  transform:translateY(0) scale(.98);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.5),
+    0 5px 14px rgba(38,31,78,.22);
+}
+
+/* прозрачная — чистая формула, тёмные чернила поверх светлого стекла */
+.btn.g{
+  color:var(--ink);
+  background:rgba(255,255,255,.12);
+  border-color:rgba(255,255,255,.5);
+}
+.btn.g:hover{
+  color:var(--ink);
+  background:rgba(255,255,255,.24);
+  border-color:rgba(255,255,255,.72);
+}
+
+/* фирменная — то же стекло, подкрашенное брендом; остаётся сквозным */
+.btn.p{
+  color:#fff;
+  background:
+    linear-gradient(rgba(255,255,255,.12), rgba(255,255,255,.12)),
+    linear-gradient(132deg,
+      rgba(169,155,255,.86) 0%, rgba(122,105,228,.88) 30%,
+      rgba(89,71,196,.9) 56%, rgba(63,127,214,.88) 80%, rgba(47,184,198,.86) 100%);
+  border-color:rgba(255,255,255,.45);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.6),
+    inset 0 -2px 6px rgba(255,255,255,.18),
+    0 8px 24px rgba(30,20,90,.3);
+}
+.btn.p:hover{
+  background:
+    linear-gradient(rgba(255,255,255,.2), rgba(255,255,255,.2)),
+    linear-gradient(132deg,
+      rgba(169,155,255,.94) 0%, rgba(122,105,228,.96) 30%,
+      rgba(89,71,196,.98) 56%, rgba(63,127,214,.96) 80%, rgba(47,184,198,.94) 100%);
+  border-color:rgba(255,255,255,.65);
+  box-shadow:
+    inset 0 1px 2px rgba(255,255,255,.8),
+    inset 0 -2px 8px rgba(255,255,255,.22),
+    0 14px 34px rgba(30,20,90,.34),
+    0 0 26px -6px rgba(107,91,214,.5);
+}
+.btn.p:active{
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.55),
+    0 5px 16px rgba(30,20,90,.3);
+}
+
+.btn.sm{padding:11px 24px;font-size:13.5px}
+
+/* тёмная тема: стекло темнее, кромка тише */
+:root[data-theme="dark"] .btn{
+  background:rgba(255,255,255,.1);
+  border-color:rgba(255,255,255,.22);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.28),
+    inset 0 -2px 6px rgba(255,255,255,.08),
+    0 8px 24px rgba(0,0,0,.45);
+}
+:root[data-theme="dark"] .btn:hover{background:rgba(255,255,255,.17)}
+:root[data-theme="dark"] .btn.g{color:var(--ink)}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .btn{
+    background:rgba(255,255,255,.1);
+    border-color:rgba(255,255,255,.22);
+    box-shadow:
+      inset 0 1px 1px rgba(255,255,255,.28),
+      inset 0 -2px 6px rgba(255,255,255,.08),
+      0 8px 24px rgba(0,0,0,.45);
+  }
+  :root:not([data-theme="light"]) .btn:hover{background:rgba(255,255,255,.17)}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .btn:hover,.btn:active{transform:none}
+}
+
+
+/* ============================================================
+   PRISM · v7 — плотнее верх, крупнее заголовок, ровные сетки
+   ============================================================ */
+
+/* ---------- шапка и герой ближе друг к другу ---------- */
+.hdr{padding:12px var(--pad) 6px}
+.sec.hero{padding-top:clamp(6px,1vw,16px)}
+.hero-grid{grid-template-columns:1.14fr .86fr}
+@media (max-width:980px){.hero-grid{grid-template-columns:1fr;gap:34px}}
+
+/* ---------- заголовок крупнее ---------- */
+h1{font-size:clamp(35px,5vw,64px);line-height:1.0;letter-spacing:-.042em}
+.h1-bold{letter-spacing:-.048em}
+.h1-type{font-size:.42em;margin-top:.42em}
+.hero-sub{margin-top:clamp(16px,1.8vw,24px);max-width:46ch}
+.hero .btns{margin-top:clamp(24px,2.6vw,34px)}
+
+/* девушка компенсирует более узкую колонку; высота фиксирована,
+   чтобы шар не раздувал строку и не отодвигал текст от шапки */
+.orbit{
+  aspect-ratio:auto; height:clamp(340px,46vw,580px);
+  width:158%; margin-left:-29%; max-width:none; overflow:visible;
+}
+.crystal-ring{width:100%;max-width:none}
+@media (max-width:980px){
+  .orbit{height:clamp(320px,74vw,560px);width:116%;margin-left:-8%}
+}
+
+/* ---------- схема 01–04 ближе к герою ---------- */
+.flow{margin-top:clamp(18px,2.2vw,32px)}
+.sec.hero{padding-bottom:clamp(28px,3.2vw,46px)}
+
+/* ---------- потери: ровный ряд, без ступенек ---------- */
+@media (min-width:1001px){
+  #poteri .g3 > *:nth-child(3n+2){transform:perspective(1100px)}
+  #poteri .g3 > *:nth-child(3n+2):hover{transform:perspective(1100px) translateY(-6px) rotateX(2.2deg)}
+}
+
+/* ---------- опции: расширение до полной системы ---------- */
+.opts h4{
+  font-family:var(--f-h); font-weight:800; font-size:clamp(19px,2.1vw,26px);
+  letter-spacing:-.03em; text-transform:none; color:var(--ink);
+  margin-bottom:12px;
+}
+.opts-lead{
+  color:var(--ink-2); font-size:15.5px; line-height:1.6; max-width:66ch;
+  margin-bottom:clamp(20px,2.2vw,28px);
+}
+.opt-grid{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:var(--stack);
+}
+@media (max-width:900px){.opt-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.opt-grid{grid-template-columns:1fr}}
+.opt-i{
+  padding:18px 20px; border-radius:var(--r-sm);
+  background:var(--gl-tint), var(--gl-fill-2);
+  border:1px solid var(--gl-edge);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.6),
+    inset 0 -2px 6px rgba(255,255,255,.16),
+    0 6px 18px rgba(38,31,78,.12);
+  backdrop-filter:blur(12px) saturate(180%);
+  -webkit-backdrop-filter:blur(12px) saturate(180%);
+}
+.opt-i b{
+  display:block; font-family:var(--f-d); font-weight:600; font-size:15.5px;
+  letter-spacing:-.012em; color:var(--ink); line-height:1.3;
+}
+.opt-i small{
+  display:block; margin-top:7px; font-size:13.5px; color:var(--ink-3); line-height:1.5;
+}
+.opts .note{margin-top:clamp(20px,2.2vw,28px)}
+
+
+/* ============================================================
+   PRISM · v8 — центровка героя, телеграм-чат, ещё прозрачнее
+   ============================================================ */
+
+/* ---------- девушка по центру относительно заголовка ---------- */
+.orbit{position:relative; display:block; overflow:visible}
+.crystal-ring{
+  position:absolute; left:50%; top:50%;
+  transform:translate(-50%,-50%);
+  width:100%; height:auto; max-width:none;
+}
+
+/* ---------- планета видна сильнее ---------- */
+:root{ --core-near:.28; --core-far:.45; }
+:root[data-theme="dark"]{ --core-near:.38; --core-far:.54; }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --core-near:.38; --core-far:.54; }
+}
+@media (max-width:760px){ :root{ --core-near:.2; --core-far:.32 } }
+@media (prefers-reduced-motion: reduce){ :root{ --core-near:.22; --core-far:.22 } }
+
+/* ---------- блоки ещё на 30% прозрачнее ---------- */
+:root{
+  --gl-fill:rgba(255,255,255,.12);
+  --gl-fill-2:rgba(255,255,255,.077);
+  --gl-edge:rgba(255,255,255,.42);
+}
+:root[data-theme="dark"]{
+  --gl-fill:rgba(255,255,255,.07);
+  --gl-fill-2:rgba(255,255,255,.042);
+  --gl-edge:rgba(255,255,255,.2);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --gl-fill:rgba(255,255,255,.07);
+    --gl-fill-2:rgba(255,255,255,.042);
+    --gl-edge:rgba(255,255,255,.2);
+  }
+}
+.glass::after{background:linear-gradient(rgba(255,255,255,.32), rgba(255,255,255,0))}
+.glass:hover{background:var(--gl-tint), rgba(255,255,255,.17)}
+#chat .console, #faq details, .safe{background:var(--gl-tint), rgba(255,255,255,.14)}
+:root[data-theme="dark"] #chat .console,
+:root[data-theme="dark"] #faq details,
+:root[data-theme="dark"] .safe{background:var(--gl-tint), rgba(255,255,255,.06)}
+#bezopasnost .safe li:nth-child(odd){background:rgba(255,255,255,.07)}
+.hdr-in{background:var(--gl-tint), rgba(255,255,255,.17)}
+.chip, .tab[aria-selected="true"], .state, .opt, .st-tags span, .flow-out span{
+  background:var(--gl-tint), rgba(255,255,255,.14);
+  border-color:rgba(255,255,255,.46);
+}
+.opt-i{background:var(--gl-tint), var(--gl-fill-2)}
+.tabs{background:rgba(255,255,255,.07)}
+.st-note{background:var(--aqua-soft), rgba(255,255,255,.08)}
+
+/* ============================================================
+   ЧАТ КАК ПЕРЕПИСКА В TELEGRAM
+   ============================================================ */
+#chat .console{padding:clamp(18px,2.2vw,28px)}
+#chat .console-top{margin-bottom:6px}
+
+#chat .turn{
+  display:flex; flex-direction:column; gap:5px;
+  align-items:flex-end;              /* вопрос от человека — справа */
+  padding:7px 0; border-bottom:0;
+}
+#chat .turn.core{align-items:flex-start}   /* ответ ядра — слева */
+
+#chat .who{
+  font-family:var(--f-m); font-size:9.5px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-4); padding:0 12px;
+}
+#chat .turn.core .who{color:var(--iris)}
+
+#chat .turn p{
+  max-width:min(76%, 640px);
+  padding:12px 17px;
+  font-size:15px; line-height:1.55;
+  border:1px solid rgba(255,255,255,.5);
+  backdrop-filter:blur(12px) saturate(180%);
+  -webkit-backdrop-filter:blur(12px) saturate(180%);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.55),
+    0 6px 18px rgba(38,31,78,.14);
+}
+/* исходящее: угол срезан справа снизу */
+#chat .turn p{
+  border-radius:18px 18px 6px 18px;
+  background:
+    linear-gradient(160deg, rgba(139,123,240,.24), rgba(107,91,214,.14));
+  color:var(--ink);
+}
+/* входящее: угол срезан слева снизу */
+#chat .turn.core p{
+  border-radius:18px 18px 18px 6px;
+  background:
+    linear-gradient(160deg, rgba(255,255,255,.3), rgba(255,255,255,.12));
+  color:var(--ink);
+}
+:root[data-theme="dark"] #chat .turn p{
+  border-color:rgba(255,255,255,.16);
+  background:linear-gradient(160deg, rgba(139,123,240,.26), rgba(107,91,214,.16));
+}
+:root[data-theme="dark"] #chat .turn.core p{
+  background:linear-gradient(160deg, rgba(255,255,255,.11), rgba(255,255,255,.045));
+}
+#chat .turn b{background:rgba(255,255,255,.4); color:var(--ink)}
+:root[data-theme="dark"] #chat .turn b{background:rgba(255,255,255,.14)}
+#chat .turn .wait{background:var(--flare-soft)}
+
+@media (max-width:640px){
+  #chat .turn p{max-width:88%; font-size:14.5px}
+}
+
+#chat .outcome{margin-top:20px}
+#chat .after{text-align:center}
+
+
+/* ============================================================
+   PRISM · v9 — ещё прозрачнее, крупнее девушка, подвал
+   ============================================================ */
+
+/* ---------- блоки ещё на 30% прозрачнее ---------- */
+:root{
+  --gl-fill:rgba(255,255,255,.084);
+  --gl-fill-2:rgba(255,255,255,.054);
+  --gl-edge:rgba(255,255,255,.4);
+}
+:root[data-theme="dark"]{
+  --gl-fill:rgba(255,255,255,.05);
+  --gl-fill-2:rgba(255,255,255,.03);
+  --gl-edge:rgba(255,255,255,.18);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --gl-fill:rgba(255,255,255,.05);
+    --gl-fill-2:rgba(255,255,255,.03);
+    --gl-edge:rgba(255,255,255,.18);
+  }
+}
+.glass::after{background:linear-gradient(rgba(255,255,255,.24), rgba(255,255,255,0))}
+.glass:hover{background:var(--gl-tint), rgba(255,255,255,.13)}
+#chat .console, #faq details, .safe{background:var(--gl-tint), rgba(255,255,255,.098)}
+:root[data-theme="dark"] #chat .console,
+:root[data-theme="dark"] #faq details,
+:root[data-theme="dark"] .safe{background:var(--gl-tint), rgba(255,255,255,.042)}
+#bezopasnost .safe li:nth-child(odd){background:rgba(255,255,255,.05)}
+.hdr-in{background:var(--gl-tint), rgba(255,255,255,.12)}
+.chip, .tab[aria-selected="true"], .state, .opt, .st-tags span, .flow-out span{
+  background:var(--gl-tint), rgba(255,255,255,.098);
+  border-color:rgba(255,255,255,.42);
+}
+.tabs{background:rgba(255,255,255,.05)}
+.st-note{background:var(--aqua-soft), rgba(255,255,255,.055)}
+#chat .turn p{background:linear-gradient(160deg, rgba(139,123,240,.19), rgba(107,91,214,.1))}
+#chat .turn.core p{background:linear-gradient(160deg, rgba(255,255,255,.21), rgba(255,255,255,.08))}
+
+/* ---------- девушка крупнее ---------- */
+.orbit{height:clamp(360px,49vw,620px); width:168%; margin-left:-34%}
+@media (max-width:980px){.orbit{height:clamp(330px,78vw,580px);width:122%;margin-left:-11%}}
+
+/* ============================================================
+   ПОДВАЛ
+   ============================================================ */
+.ftr{
+  margin-top:clamp(48px,6vw,86px);
+  padding:clamp(44px,5vw,72px) var(--pad) 0;
+  border-top:1px solid var(--hair);
+  background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.03));
+  backdrop-filter:blur(10px) saturate(160%);
+  -webkit-backdrop-filter:blur(10px) saturate(160%);
+}
+.ftr-in{
+  max-width:1180px; margin:0 auto;
+  display:grid; grid-template-columns:1.7fr 1fr 1fr 1.25fr;
+  gap:clamp(28px,3.4vw,56px); align-items:start;
+}
+@media (max-width:980px){.ftr-in{grid-template-columns:1fr 1fr;gap:34px}
+  .ftr-brand{grid-column:1 / -1}}
+@media (max-width:560px){.ftr-in{grid-template-columns:1fr}}
+
+.ftr-brand .logo{font-size:17px}
+.ftr-brand p{
+  margin-top:16px; max-width:44ch;
+  color:var(--ink-3); font-size:14.5px; line-height:1.62;
+}
+.ftr-brand .btn{margin-top:22px}
+
+.ftr-col{display:flex; flex-direction:column; gap:11px}
+.ftr-col h4{
+  font-family:var(--f-m); font-weight:500; font-size:10px;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--ink-4);
+  margin-bottom:4px;
+}
+.ftr-col a, .ftr-col span{
+  font-size:14.5px; line-height:1.4; color:var(--ink-3);
+}
+.ftr-col a{
+  width:fit-content; position:relative;
+  transition:color .2s ease;
+}
+.ftr-col a::after{
+  content:""; position:absolute; left:0; right:100%; bottom:-3px; height:1px;
+  background:var(--iris); transition:right .28s cubic-bezier(.2,.8,.3,1);
+}
+.ftr-col a:hover{color:var(--ink)}
+.ftr-col a:hover::after{right:0}
+.ftr-col span{color:var(--ink-4); font-size:13.5px}
+
+.ftr-bar{
+  max-width:1180px; margin:clamp(38px,4.4vw,64px) auto 0;
+  padding:22px 0 30px;
+  border-top:1px solid var(--hair);
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px 28px;
+  font-family:var(--f-m); font-size:11.5px; letter-spacing:.06em;
+  color:var(--ink-4);
+}
+.ftr-note{margin-right:auto; opacity:.85; position:relative; padding-left:28px}
+.ftr-note::before{content:"·"; position:absolute; left:0; opacity:.6}
+.ftr-up{
+  display:inline-flex; align-items:center; gap:7px;
+  padding:8px 16px; border-radius:999px;
+  border:1px solid var(--gl-edge);
+  background:var(--gl-tint), rgba(255,255,255,.1);
+  backdrop-filter:blur(12px) saturate(180%);
+  -webkit-backdrop-filter:blur(12px) saturate(180%);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.55), 0 6px 16px rgba(38,31,78,.12);
+  color:var(--ink-3);
+  transition:transform .25s ease, color .2s ease, background .25s ease;
+}
+.ftr-up::after{content:"↑"; font-size:12px}
+.ftr-up:hover{transform:translateY(-2px); color:var(--ink); background:var(--gl-tint), rgba(255,255,255,.2)}
+@media (max-width:560px){
+  .ftr-bar{gap:12px}
+  .ftr-note{margin-right:0; width:100%; padding-left:0}
+  .ftr-note::before{display:none}
+}
